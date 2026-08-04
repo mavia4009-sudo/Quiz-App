@@ -172,6 +172,6 @@ h2 {
 @media (max-width: 600px) {
     .quiz-container {
         width: 85vw;
-        height: auto;
+        min-height: auto;
     }
 }
