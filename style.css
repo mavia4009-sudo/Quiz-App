@@ -21,6 +21,7 @@ body {
     border-radius: 10px;
     width: 400px;
 
+
     box-shadow: -16px 20px 15px 7px rgba(0, 0, 0, 0.5);
 
 }
@@ -169,8 +170,8 @@ h2 {
 
 
 @media (max-width: 600px) {
-    .quiz-container{
+    .quiz-container {
         width: 85vw;
-        height:95vh;
+        height: auto;
     }
 }
