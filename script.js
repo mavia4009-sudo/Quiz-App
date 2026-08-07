@@ -1,6 +1,11 @@
 let currentQuestion = 0;
 let score = 0;
+let highScore = Number(localStorage.getItem("highScore")) || 0;
 let answered = false;
+let timeLeft = 15;
+let timer;
+let message = "";
+
 
 const questions = [
     {
@@ -18,7 +23,26 @@ const questions = [
         c: "Server banane ke liye",
         d: "Operating System",
         correct: "b"
+    },
+    {
+        question: "JavaScript ko HTML mein kaun sa tag connect karta hai?",
+        a: "css",
+        b: "script",
+        c: "js",
+        d: "link",
+        correct: "c"
+
+    },
+    {
+        question: "CSS mein text ka color change karne ke liye kya use hota hai?",
+        a: "font-size",
+        b: "background",
+        c: "text-style",
+        d: "color",
+        correct: "d"
+
     }
+
 ];
 let questionElement = document.querySelector("#question")
 let OptionA = document.querySelector("#OptionA")
@@ -26,11 +50,19 @@ let OptionB = document.querySelector("#OptionB")
 let OptionC = document.querySelector("#OptionC")
 let OptionD = document.querySelector("#OptionD")
 let result = document.querySelector("#result");
+let time = document.querySelector("#time");
+let progressBar = document.querySelector("#progress-bar");
+let questionCounter = document.querySelector("#question-counter");
 
 
 function showQuestion() {
     let currentQuiz = questions[currentQuestion];
     questionElement.innerHTML = currentQuiz.question;
+
+    questionCounter.innerHTML = `Question ${currentQuestion + 1} / ${questions.length}`;
+
+
+
     OptionA.innerHTML = currentQuiz.a;
     OptionB.innerHTML = currentQuiz.b;
     OptionC.innerHTML = currentQuiz.c;
@@ -52,11 +84,26 @@ function showQuestion() {
     OptionC.disabled = false;
     OptionD.disabled = false;
 
+    clearInterval(timer);
+    timeLeft = 15;
+    time.innerHTML = timeLeft;
+
+    startTimer();
+
+    let progress = ((currentQuestion + 1) / questions.length) * 100;
+    progressBar.style.width = progress + "%";
+
+
+
+
+
+
 
     //
 
 }
 function showcorrectAnswer() {
+
     let currentQuiz = questions[currentQuestion];
     if (currentQuiz.correct === "a") {
         OptionA.classList.add("correct");
@@ -81,6 +128,7 @@ function disableOption() {
 showQuestion();
 
 OptionA.addEventListener("click", () => {
+    clearInterval(timer)
     let currentQuiz = questions[currentQuestion];
     OptionA.classList.remove("selected");
     answered = true;
@@ -97,6 +145,7 @@ OptionA.addEventListener("click", () => {
     disableOption();
 })
 OptionB.addEventListener("click", () => {
+    clearInterval(timer)
     let currentQuiz = questions[currentQuestion];
     OptionA.classList.remove("selected");
     answered = true;
@@ -114,7 +163,9 @@ OptionB.addEventListener("click", () => {
     disableOption();
 })
 OptionC.addEventListener("click", () => {
+    clearInterval(timer)
     let currentQuiz = questions[currentQuestion];
+
     OptionA.classList.remove("selected");
     answered = true;
     if (currentQuiz.correct === "c") {
@@ -130,6 +181,7 @@ OptionC.addEventListener("click", () => {
     disableOption();
 })
 OptionD.addEventListener("click", () => {
+    clearInterval(timer)
     let currentQuiz = questions[currentQuestion];
     OptionA.classList.remove("selected");
     answered = true;
@@ -158,7 +210,31 @@ document.querySelector("#next-btn").addEventListener("click", () => {
             showQuestion();
         }
         else {
-            result.innerHTML = `Your Score: ${score} / ${questions.length}`;
+            let percentage = (score / questions.length) * 100;
+
+            if (percentage > 80) {
+                message = "Excellent! 🏆";
+            }
+            else if (percentage >= 50) {
+                message = "Good Job! 👍";
+            }
+            else {
+                message = "Keep Practicing! 💪";
+            }
+
+
+
+            if (score > highScore) {
+                highScore = score;
+                localStorage.setItem("highScore", highScore);
+            }
+
+            result.innerHTML = `Your Score: ${score} / ${questions.length}<br>
+Percentage: ${percentage}%<br> 
+High Score: ${highScore}%<br>
+Message:${message}`;
+
+
         }
     }
 
@@ -171,6 +247,25 @@ document.querySelector("#restart-btn").addEventListener("click", () => {
     showQuestion();
     score = 0;
 });
+
+function startTimer() {
+
+    timer = setInterval(() => {
+        timeLeft--;
+        time.innerHTML = timeLeft;
+
+        if (timeLeft === 0) {
+            clearInterval(timer)
+            answered = true
+            result.innerHTML = "⏰ Time's Up!";
+            showcorrectAnswer();
+            disableOption();
+
+        }
+
+    }, 1000);
+
+}
 
 
 //  
